@@ -1,0 +1,27 @@
+{
+  "name": "codingcamp-31august26-yamaroni",
+  "version": "1.0.0",
+  "description": "Mini Project RevoU",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/storage.test.js && node test/theme.test.js && node test/greeting.test.js && node test/name.test.js && node test/timer.test.js && node test/todo.test.js && node test/links.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Huwkmiaw/CodingCamp-31August26-yamaroni.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Huwkmiaw/CodingCamp-31August26-yamaroni/issues"
+  },
+  "homepage": "https://github.com/Huwkmiaw/CodingCamp-31August26-yamaroni#readme",
+  "dependencies": {
+    "fast-check": "4.9.0"
+  }
+}

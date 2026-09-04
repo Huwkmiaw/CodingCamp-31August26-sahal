@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Dashboard</title>
+  <!-- Anti-FOUC inline script: terapkan tema sebelum CSS dirender -->
+  <script>(function(){ var t=localStorage.getItem('pdt_theme')||'light'; document.documentElement.setAttribute('data-theme',t); })();</script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Modal Pop-up Selamat Datang (Minimalis Modern) -->
+  <div id="welcome-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="welcome-title" class="modal-title">Selamat Datang</h2>
+        <p class="modal-desc">Personalisasi ruang kerja Anda. Masukkan nama Anda untuk memulai:</p>
+      </div>
+      <div class="modal-body">
+        <label for="welcome-name-input" class="sr-only">Nama Anda</label>
+        <input
+          id="welcome-name-input"
+          type="text"
+          maxlength="50"
+          placeholder="Ketik nama Anda di sini..."
+          autocomplete="off"
+        >
+        <span id="welcome-name-error" class="error-msg" role="alert"></span>
+      </div>
+      <div class="modal-actions">
+        <button id="welcome-skip-btn" class="btn btn-secondary">Nanti Saja</button>
+        <button id="welcome-submit-btn" class="btn btn-primary">Mulai</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="dashboard-header">
+    <!-- GreetingWidget: time, date, greeting+name -->
+    <div class="header-left">
+      <div class="greeting-area">
+        <div id="clock" class="clock">00:00</div>
+        <div class="greeting-sub">
+          <div id="date-display" class="date-display"></div>
+          <div class="greeting-row">
+            <span id="greeting-display" class="greeting-display">Selamat Datang!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Actions: Name Quick Form + Theme Toggle -->
+    <div class="header-right">
+      <div class="name-setting">
+        <input
+          id="name-input"
+          type="text"
+          maxlength="50"
+          placeholder="Nama Anda"
+          aria-label="Nama kustom"
+        >
+        <button id="name-save-btn" class="btn btn-primary" aria-label="Simpan nama">Simpan</button>
+        <span id="name-error" class="error-msg" role="alert"></span>
+      </div>
+
+      <!-- Theme toggle button (Minimalist SVG icon) -->
+      <button id="theme-toggle" class="theme-toggle" aria-label="Ganti tema">
+        <span id="theme-toggle-icon" class="theme-toggle-icon"></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+
+    <!-- Kolom 1: Focus Timer -->
+    <section class="widget widget--timer">
+      <div class="widget-header">
+        <h2 class="widget-title">Focus Timer</h2>
+        <span id="timer-status-badge" class="badge-status">Siap</span>
+      </div>
+
+      <!-- Display Timer -->
+      <div id="timer-display" class="timer-display">25:00</div>
+
+      <!-- Controls Utama -->
+      <div class="timer-controls">
+        <button id="timer-start" class="btn btn-success" aria-label="Mulai timer">Mulai</button>
+        <button id="timer-stop" class="btn btn-danger" aria-label="Hentikan timer">Berhenti</button>
+        <button id="timer-reset" class="btn btn-secondary" aria-label="Reset timer">Atur Ulang</button>
+      </div>
+
+      <!-- Custom Timer Section -->
+      <div class="custom-timer-section">
+        <div class="custom-timer-label">Durasi Timer:</div>
+        <!-- Preset Durasi Cepat -->
+        <div class="timer-presets" role="group" aria-label="Pilihan durasi timer">
+          <button type="button" class="preset-btn" data-minutes="15">15m</button>
+          <button type="button" class="preset-btn active" data-minutes="25">25m</button>
+          <button type="button" class="preset-btn" data-minutes="45">45m</button>
+          <button type="button" class="preset-btn" data-minutes="60">60m</button>
+        </div>
+
+        <!-- Input Menit Kustom -->
+        <div class="custom-timer-input-row">
+          <input
+            type="number"
+            id="custom-timer-minutes"
+            min="1"
+            max="180"
+            placeholder="Menit"
+            aria-label="Kustom menit timer"
+          >
+          <button type="button" id="custom-timer-apply" class="btn btn-outline">Terapkan</button>
+        </div>
+        <span id="custom-timer-error" class="error-msg" role="alert"></span>
+      </div>
+
+      <div id="timer-complete-msg" class="timer-complete-msg hidden" role="alert">
+        Sesi fokus telah selesai.
+      </div>
+    </section>
+
+    <!-- Kolom 2: Daftar Tugas (Todo) -->
+    <section class="widget widget--todo">
+      <div class="widget-header widget-header--space">
+        <h2 class="widget-title">Daftar Tugas</h2>
+        <!-- Task Stats Counters -->
+        <div class="task-stats-bar">
+          <span class="stat-item">Total: <strong id="stat-total">0</strong></span>
+          <span class="stat-divider">|</span>
+          <span class="stat-item">Aktif: <strong id="stat-active">0</strong></span>
+          <span class="stat-divider">|</span>
+          <span class="stat-item">Selesai: <strong id="stat-completed">0</strong></span>
+        </div>
+      </div>
+
+      <!-- Filter Memanjang Horizontal (Segmented Tabs) -->
+      <div class="sort-tabs-container">
+        <div class="sort-tabs" role="tablist" aria-label="Filter status tugas">
+          <button type="button" class="sort-tab active" data-mode="default" role="tab" aria-selected="true">
+            Semua Tugas
+          </button>
+          <button type="button" class="sort-tab" data-mode="incomplete" role="tab" aria-selected="false">
+            Belum Selesai
+          </button>
+          <button type="button" class="sort-tab" data-mode="complete" role="tab" aria-selected="false">
+            Selesai
+          </button>
+        </div>
+        <!-- Hidden select for programmatic compatibility -->
+        <select id="sort-select" class="sr-only" aria-label="Urutan daftar tugas" tabindex="-1">
+          <option value="default">Default</option>
+          <option value="incomplete">Belum selesai</option>
+          <option value="complete">Selesai</option>
+        </select>
+      </div>
+
+      <!-- Todo Input Form (Inline Bar yang Rapi) -->
+      <div class="todo-input-area">
+        <div class="todo-input-row">
+          <input
+            id="task-input"
+            type="text"
+            maxlength="200"
+            placeholder="Tambahkan tugas baru..."
+            aria-label="Teks tugas baru"
+          >
+          <button id="task-add-btn" class="btn btn-primary" aria-label="Tambah tugas">Tambah</button>
+        </div>
+        <span id="task-error" class="error-msg" role="alert"></span>
+      </div>
+
+      <!-- Task List -->
+      <ul id="task-list" class="task-list" aria-label="Daftar tugas"></ul>
+      <div id="task-empty-state" class="empty-state hidden">
+        Belum ada tugas dalam daftar ini.
+      </div>
+    </section>
+
+    <!-- Kolom 3: Quick Links -->
+    <section class="widget widget--links">
+      <div class="widget-header">
+        <h2 class="widget-title">Tautan Cepat</h2>
+        <span id="links-count-badge" class="badge-count">0/10</span>
+      </div>
+
+      <!-- Form Input Tautan -->
+      <div class="link-input-area">
+        <input
+          id="link-label"
+          type="text"
+          maxlength="50"
+          placeholder="Label (misal: GitHub)"
+          aria-label="Label tautan"
+        >
+        <input
+          id="link-url"
+          type="text"
+          maxlength="2048"
+          placeholder="URL (misal: github.com)"
+          aria-label="URL tautan"
+        >
+        <button id="link-add-btn" class="btn btn-primary btn-block" aria-label="Tambah tautan">
+          Tambah Tautan
+        </button>
+        <span id="link-error" class="error-msg" role="alert"></span>
+      </div>
+
+      <!-- Grid Tautan -->
+      <div id="links-grid" class="links-grid" aria-label="Daftar tautan cepat"></div>
+      <div id="links-empty-state" class="empty-state hidden">
+        Belum ada tautan yang disimpan.
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Storage unavailability banner -->
+  <div id="storage-warning" class="storage-warning hidden" role="alert">
+    Penyimpanan lokal tidak tersedia. Data tidak akan tersimpan setelah halaman ditutup.
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
